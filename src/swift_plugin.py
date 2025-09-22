@@ -235,7 +235,7 @@ class LocalizationReward(ORM):
         self.tokenizer = AutoTokenizer.from_pretrained(self.model)
         self.client = OpenAI(
             base_url="http://__YOUR_IP_ADDRESS__:__YOUR_PORT__/v1",
-            api_key="__YOUR_",
+            api_key="__YOUR_API_KEY__",
         )
         self.max_tokens = 1024
         with open("/home3/s20245636/lab/OCR/VEHM/instr_tuning/data/processed_data_wo_korean.json", "r", encoding="utf-8-sig") as f:
