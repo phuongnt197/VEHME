@@ -1,1 +1,1 @@
-# VEHME
+# VEHME:  Vision-Language Model For Evaluating Handwritten Mathematics Expressions
