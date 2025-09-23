@@ -1,6 +1,7 @@
-import math
 import re
-from src.prompts.localization import SYSTEM_PROMPT, PATTERN_DETAILED_AND_LOCALIZATION, FERMAT_USER_PROMPT_DETAILED_AND_LOCALIZATION_FOR_EVAL, USER_PROMPT_DETAILED_AND_LOCALIZATION_FOR_EVAL
+
+from dotenv import load_dotenv
+from instr_tuning.prompts.localization import FERMAT_USER_PROMPT_DETAILED_AND_LOCALIZATION_FOR_EVAL, SYSTEM_PROMPT, USER_PROMPT_DETAILED_AND_LOCALIZATION, PATTERN_DETAILED_AND_LOCALIZATION
 from openai import OpenAI
 import base64
 from io import BytesIO
@@ -11,11 +12,56 @@ import argparse
 from PIL import Image
 import os
 from sklearn.metrics import f1_score, accuracy_score, precision_score, recall_score, average_precision_score
+import math
+from tenacity import (
+    retry,
+    stop_after_attempt,
+    wait_random_exponential,
+)  # for exponential backoff
 
+load_dotenv()
 client = OpenAI(
-    base_url="http://__YOUR_IP_ADDRESS__:__YOUR_PORT__/v1",
-    api_key="__YOUR_API_KEY__",
+    base_url="https://api.openai.com/v1",
+    api_key=os.getenv("OPENAI_API_KEY"),
 )
+
+pricing = {
+     "gpt-4o-2024-08-06": {
+         "input": 2.5,
+         "output": 10.0,
+     },
+    "gpt-4o-mini-2024-07-18": {
+        "input": 0.15,
+        "output": 0.60,
+     },
+     "gpt-4.1-mini-2025-04-14": {
+         "input": 0.40,
+         "output": 1.60,
+     },
+     "gpt-4.1-nano-2025-04-14": {
+         "input": 0.10,
+         "output": 0.40,
+     },
+     "gpt-4.1-2025-04-14": {
+         "input": 2.00,
+         "output": 8.00,
+     },
+
+}
+
+def encode_image_to_base64(image):
+    """Encodes a PIL image to a Base64 string."""
+    if isinstance(image, dict):
+        image = image["path"]
+    with open(image, "rb") as img_file:
+        image = Image.open(img_file)
+        image = image.convert("RGB")
+    
+    # Resize the image to 224x224
+    # image = image.resize((224, 224))
+    buffered = BytesIO()
+    image.save(buffered, format="JPEG")
+    return base64.b64encode(buffered.getvalue()).decode("utf-8")
 
 MAX_RATIO = 200
 
@@ -33,7 +79,7 @@ def floor_by_factor(number: int, factor: int) -> int:
     return math.floor(number / factor) * factor
 
 def smart_resize(
-    height: int, width: int, factor: int = 28, min_pixels: int = 4*28*28, max_pixels: int = 64*28*28
+    height: int, width: int, factor: int = 28, min_pixels: int = 4*28*28, max_pixels: int = 640*28*28
 ) -> tuple[int, int]:
     """
     Rescales the image so that the following conditions are met:
@@ -72,7 +118,6 @@ def encode_image_to_base64(image):
     # image = image.resize((224, 224))
     new_h, new_w = smart_resize(image.size[1], image.size[0])
     image = image.resize((new_w, new_h))
-    # image = image.resize((448, 448))
     buffered = BytesIO()
     image.save(buffered, format="JPEG")
     return base64.b64encode(buffered.getvalue()).decode("utf-8")
@@ -86,14 +131,14 @@ def resize_from_base64(image_base64):
     image = Image.open(BytesIO(image_data))
     image = image.convert("RGB")
     
-    # # Resize the image to 224x224
-    # new_h, new_w = smart_resize(image.size[1], image.size[0])
-    # image = image.resize((new_w, new_h))
-    # image = image.resize((448, 448))
+    # Resize the image to 224x224
+    new_h, new_w = smart_resize(image.size[1], image.size[0])
+    image = image.resize((new_w, new_h))
     
     buffered = BytesIO()
     image.save(buffered, format="JPEG")
     return begin_text + base64.b64encode(buffered.getvalue()).decode("utf-8")
+
 
 
 def format_data(sample):
@@ -143,7 +188,7 @@ def format_data(sample):
             "content": [
                 {
                     "type": "text",
-                    "text": USER_PROMPT_DETAILED_AND_LOCALIZATION_FOR_EVAL,
+                    "text": USER_PROMPT_DETAILED_AND_LOCALIZATION,
                 },
                 {
                     "type": "text",
@@ -178,13 +223,13 @@ def format_data(sample):
     return conversation
 
 
+@retry(wait=wait_random_exponential(min=30, max=60), stop=stop_after_attempt(6))
 def generate_text_from_sample(model_id, sample):
-    samples = format_data(sample)
-
+    sample = format_data(sample)  # Format the sample data
 
     completions = client.chat.completions.create(
         model=model_id,
-        messages=samples,
+        messages=sample,
         temperature=0.8,
         max_tokens=1024,
         n=1,
@@ -192,7 +237,9 @@ def generate_text_from_sample(model_id, sample):
     
     # Extract the generated text from the response
     generated_text = completions.choices[0].message.content
-    return generated_text
+    usage = completions.usage
+
+    return generated_text, usage
 
 def load_dataset(dataset_path):
     """Load the dataset from the specified path of jsonl file."""
@@ -225,38 +272,57 @@ def calculate_precision(results):
     precision = true_positives / (true_positives + false_positives) if (true_positives + false_positives) > 0 else 0
     return precision
 
+def compute_price(number_of_data_to_augment, average_input_tokens, average_output_tokens, input_price_per_million_tokens, output_price_per_million_tokens, is_batch=False):
+    if is_batch:
+        average_input_tokens = average_input_tokens / 2
+        average_output_tokens = average_output_tokens / 2
+    input_price = input_price_per_million_tokens * average_input_tokens / 1_000_000
+    output_price = output_price_per_million_tokens * average_output_tokens / 1_000_000
+    return (input_price + output_price) * number_of_data_to_augment
+
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(description="Inference script for multimodal model.")
-    parser.add_argument("--base_url", type=str, default="http://localhost", help="base url for inference server")
-    parser.add_argument("--port", type=int, default=8000, help="port number for inference server")
-    parser.add_argument("--model", type=str, default="Qwen/Qwen2.5-VL-7B-Instruct", help="Model ID")
-    parser.add_argument("--dataset", type=str, default="src/data/test_data_wo_korean_red_bbox.jsonl", help="Dataset path")
+    parser.add_argument("--model", type=str, default="gpt-4o-2024-08-06", help="Model ID")
+    parser.add_argument("--dataset", type=str, default="src/data/test_data_wo_korean.jsonl", help="Dataset path")
     parser.add_argument("--num_workers", type=int, default=8, help="Number of workers for requesting")
     parser.add_argument("--save_path", type=str, default="src/eval/results/aihub", help="Path to save the inference results")
 
     args = parser.parse_args()
 
-    client = OpenAI(
-        base_url=f"{args.base_url}:{args.port}/v1",
-        api_key="__YOUR_API_KEY__",
-    )
-
     print("Loading dataset...")
     test_dataset = load_dataset(args.dataset)
+    num_samples = len(test_dataset)
+    print("Number of samples in the dataset:", num_samples)
+    # test_dataset = test_dataset[:10]  # Limit to 10 samples for testing
     
     def process_data_point(data_point):
-        predict = generate_text_from_sample(args.model, data_point)
+        predict, usage = generate_text_from_sample(args.model, data_point)
         return {
             "data": data_point,
             "label": data_point["labels"],
             "predict": predict,
             "result": evaluate(predict, data_point["labels"]),
+            "prompt_tokens": usage.prompt_tokens,
+            "completion_tokens": usage.completion_tokens,
+            "total_tokens": usage.total_tokens,
         }
     
     print("Starting inference...")
     with ThreadPoolExecutor(max_workers=args.num_workers) as executor:
         inference_result = list(tqdm(executor.map(process_data_point, test_dataset), total=len(test_dataset)))
+
+    print("Estimating cost...")
+    total_input_tokens = sum(item["prompt_tokens"] for item in inference_result)
+    total_output_tokens = sum(item["completion_tokens"] for item in inference_result)
+    avg_in = total_input_tokens / len(inference_result)
+    avg_out = total_output_tokens / len(inference_result)
+    model_price = pricing[args.model]
+    total_cost = compute_price(num_samples, avg_in, avg_out, model_price["input"], model_price["output"])
+    print(f"Avg input tokens: {avg_in:.2f}")
+    print(f"Avg output tokens: {avg_out:.2f}")
+    print(f"Estimated cost for {len(test_dataset)} samples: ${total_cost:.4f}")
+    print("Inference completed.")
 
     # Save the inference results to a file
     folder_name = args.model.split("/")[-1]
