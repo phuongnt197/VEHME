@@ -1,7 +1,7 @@
 # VEHME:  Vision-Language Model For Evaluating Handwritten Mathematics Expressions
-<sub><sup> **Thu Phuong Nguyen***, **Duc M. Nguyen***, Hyotaek Jeon, Hyunwook Lee, Hyunmin Song, *Sungahn Ko***, and *Taehwan Kim*** </sup></sub>
+<sub> **Thu Phuong Nguyen***, **Duc M. Nguyen***, Hyotaek Jeon, Hyunwook Lee, Hyunmin Song, *Sungahn Ko***, and *Taehwan Kim*** </sub>
 
-<p align="right"> <sub><sup>* Equal contribution <br> ** Co-corresponding authors </sup></sub> </p>
+<p align="right"> <sub>* Equal contribution <br> ** Co-corresponding authors </sub> </p>
 
 ---
 
