@@ -16,7 +16,7 @@ swift sft \
     --target_modules all-linear \
     --lora_dtype bfloat16 \
     --torch_dtype bfloat16 \
-    --dataset "/home3/s20245636/lab/OCR/VEHM/instr_tuning/data/qwq_sft_data_red_bbox.json" \
+    --dataset "./src/data/qwq_sft_data_red_bbox.json" \
     --system 'You are a helpful assistant. You first thinks about the reasoning process in the mind and then provides the user with the answer.' \
     --max_length 8192 \
     --num_train_epochs 2 \

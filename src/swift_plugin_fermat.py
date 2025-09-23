@@ -238,8 +238,6 @@ class LocalizationReward(ORM):
             api_key="__YOUR_API_KEY__",
         )
         self.max_tokens = 1024
-        with open("./src/data/processed_data_wo_korean.json", "r", encoding="utf-8-sig") as f:
-            self.data = json.load(f)
 
     def __call__(self, completions, labels, question, reference_answer, student_answer, **kwargs) -> List[float]:
         """
