@@ -78,7 +78,7 @@ python -m instr_tuning.eval.evaluate_inference_result --base_url [vllm url] --po
 The result can be found in directory `src/instr_tuning/eval/results`.
 
 ## Acknowledgement
-
+Our SFT and GRPO implementation is based on the [`ms-swift` framework](https://github.com/modelscope/ms-swift), and [`vllm` framework](https://github.com/vllm-project/vllm) for efficient inference. We sincerely thank all contributors for their amazing work.
 
 ## Citation
 ```bibtex
