@@ -1,0 +1,6 @@
+path: /Root/directory/of/the/dataset/
+train: images/train      # Relative path to training images
+val: images/val          # Relative path to validation images
+
+names:
+  0: math_expression
