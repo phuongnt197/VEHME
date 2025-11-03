@@ -82,11 +82,27 @@ Our SFT and GRPO implementation is based on the [`ms-swift` framework](https://g
 
 ## Citation
 ```bibtex
-@inproceedings{nguyen2025vehme,
-    title={{VEHME}: A Vision-Language Model For Evaluating Handwritten Mathematics Expressions},
-    author={Thu Phuong Nguyen and Duc M. Nguyen and Hyotaek Jeon and Hyunwook Lee and Hyunmin Song and Sungahn Ko and Taehwan Kim},
-    booktitle={The 2025 Conference on Empirical Methods in Natural Language Processing},
-    year={2025},
-    url={https://openreview.net/forum?id=lLlIXm4KNE}
+@inproceedings{nguyen-etal-2025-vehme,
+    title = "{VEHME}: A Vision-Language Model For Evaluating Handwritten Mathematics Expressions",
+    author = "Nguyen, Thu Phuong  and
+      Nguyen, Duc M.  and
+      Jeon, Hyotaek  and
+      Lee, Hyunwook  and
+      Song, Hyunmin  and
+      Ko, Sungahn  and
+      Kim, Taehwan",
+    editor = "Christodoulopoulos, Christos  and
+      Chakraborty, Tanmoy  and
+      Rose, Carolyn  and
+      Peng, Violet",
+    booktitle = "Proceedings of the 2025 Conference on Empirical Methods in Natural Language Processing",
+    month = nov,
+    year = "2025",
+    address = "Suzhou, China",
+    publisher = "Association for Computational Linguistics",
+    url = "https://aclanthology.org/2025.emnlp-main.1619/",
+    pages = "31781--31801",
+    ISBN = "979-8-89176-332-6",
+    abstract = "Automatically assessing handwritten mathematical solutions is an important problem in educational technology with practical applications, but remains a significant challenge due to the diverse formats, unstructured layouts, and symbolic complexity of student work. To address this challenge, we introduce VEHME-a $\textbf{V}$ision-Language Model for $\textbf{E}$valuating $\textbf{H}$andwritten $\textbf{M}$athematics $\textbf{E}$xpressions{---}designed to assess open-form handwritten math responses with high accuracy and interpretable reasoning traces. VEHME integrates a two-phase training pipeline: (i) supervised fine-tuning using structured reasoning data, and (ii) reinforcement learning that aligns model outputs with multi-dimensional grading objectives, including correctness, reasoning depth, and error localization. To enhance spatial understanding, we propose an Expression-Aware Visual Prompting Module, trained on our synthesized multi-line math expressions dataset to robustly guide attention in visually heterogeneous inputs. Evaluated on AIHub and FERMAT datasets, VEHME achieves state-of-the-art performance among open-source models and approaches the accuracy of proprietary systems, demonstrating its potential as a scalable and accessible tool for automated math assessment. Our training and experiment code is publicly available at our GitHub repository."
 }
 ```
