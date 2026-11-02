@@ -3,15 +3,23 @@
 
 <p align="right"> <sub>* Equal contribution <br> ** Co-corresponding authors </sub> </p>
 
+[![arXiv](https://img.shields.io/badge/arXiv-2510.22373-b31b1b.svg)](https://arxiv.org/abs/2510.22373)
+[![ACL Anthology](https://img.shields.io/badge/ACL-EMNLP%202025-B31B1B.svg)](https://aclanthology.org/2025.emnlp-main.1619/)
+[![GitHub](https://img.shields.io/badge/GitHub-VEHME-181717?logo=github)](https://github.com/phuongnt197/VEHME)
+[![Hugging Face](https://img.shields.io/badge/🤗-Hugging%20Face-yellow.svg)](https://huggingface.co/phuongnt/VEHME)
+[![Website](https://img.shields.io/badge/🌐-Project%20Website-0A66C2.svg)](https://vehme.github.io/)
+
 ---
 
 This is an official implementation of VEHME in the following paper: VEHME:  Vision-Language Model For Evaluating Handwritten Mathematics Expressions, EMNLP 2025 (Main Conference)
 
+## 📰 News
+🔥 [2026.11.02] Following AIHub's updated data usage policy, we are excited to release the VEHME model weights on Hugging Face! You can access the checkpoint at [https://huggingface.co/phuongnt/VEHME](https://huggingface.co/phuongnt/VEHME)
 
 ## Dependencies
 You can create a new virtual environment and install all of the dependencies via the following command
 ```bash
-create --name vehme --file environment.yml
+conda create --name vehme --file environment.yml
 ```
 
 ## Data
