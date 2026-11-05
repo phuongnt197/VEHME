@@ -14,6 +14,8 @@
 This is an official implementation of VEHME in the following paper: VEHME:  Vision-Language Model For Evaluating Handwritten Mathematics Expressions, EMNLP 2025 (Main Conference)
 
 ## 📰 News
+🔥 [2026.11.05] We have also released a version of our model fine-tuned on a subset of [FERMAT dataset](https://huggingface.co/datasets/ai4bharat/FERMAT). Check it out on [🤗 Hugging Face](https://huggingface.co/phuongnt/VEHME-FERMAT)
+
 🔥 [2026.11.02] Following AIHub's updated data usage policy, we are excited to release the VEHME model weights on Hugging Face! You can access the checkpoint at [https://huggingface.co/phuongnt/VEHME](https://huggingface.co/phuongnt/VEHME)
 
 ## Dependencies
