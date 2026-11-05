@@ -26,7 +26,8 @@ conda create --name vehme --file environment.yml
 
 ## Data
 * Please download the AIHub data [here](https://www.aihub.or.kr/aihubdata/data/view.do?pageIndex=1&currMenu=115&topMenu=100&srchOptnCnd=OPTNCND001&searchKeyword=%EC%88%98%ED%95%99&srchDetailCnd=DETAILCND001&srchOrder=ORDER001&srchPagePer=20&aihubDataSe=data&dataSetSn=71716)
-* Please refer to [AI4Bharat/FERMAT](https://github.com/AI4Bharat/FERMAT) repository to download the FERMAT dataset.
+* Please refer to [🤗 AI4Bharat/FERMAT](https://github.com/AI4Bharat/FERMAT) repository to download the FERMAT dataset.
+    * The train/test split used in our experiment is published at [🤗 phuongnt/fermat-split](https://huggingface.co/datasets/phuongnt/fermat-split)
 
 ## Expression-aware Visual Prompting Module
 ### Multi-Line Expression Canvas Synthesis
