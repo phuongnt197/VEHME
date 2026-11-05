@@ -3,7 +3,7 @@
 
 <p align="right"> <sub>* Equal contribution <br> ** Co-corresponding authors </sub> </p>
 
-[![arXiv](https://img.shields.io/badge/arXiv-2510.22373-b31b1b.svg)](https://arxiv.org/abs/2510.22373)
+[![arXiv](https://img.shields.io/badge/arXiv-2510.22798-b31b1b.svg)](https://arxiv.org/abs/2510.22798)
 [![ACL Anthology](https://img.shields.io/badge/ACL-EMNLP%202025-B31B1B.svg)](https://aclanthology.org/2025.emnlp-main.1619/)
 [![GitHub](https://img.shields.io/badge/GitHub-VEHME-181717?logo=github)](https://github.com/phuongnt197/VEHME)
 [![Hugging Face](https://img.shields.io/badge/🤗-Hugging%20Face-yellow.svg)](https://huggingface.co/phuongnt/VEHME)
